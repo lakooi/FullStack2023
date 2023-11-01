@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import phonebookService from './services/phonebook'
-
+import './index.css'
 const Filter = ({handleFilterChange}) => {
   return (
     <div>
@@ -38,8 +38,25 @@ const PersonForm = ({addPerson, newName, newNumber, handleNameFormChange, handle
   )
 }
 
+const Notification = ({ message, className }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className={className}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filter, setFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [positiveMessage, setPositiveMessage] = useState(null)
 
   useEffect(() => {
     phonebookService
@@ -49,16 +66,8 @@ const App = () => {
       })
   }, [])
 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState('')
-
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-  const findPersonByName = name => persons.find(person => person.name === name);
-
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value)
-  }
+  const findPersonByName = name => persons.find(person => person.name === name)
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -89,34 +98,59 @@ const App = () => {
                 return item
               })
             ),
+            setPositiveMessage(`${newName} had their number changed`)
             setNewName("")
             setNewNumber("")
+          })
+          .catch(error => {
+            setErrorMessage(`Information on ${newName} has already been removed from the server`)
           })
       }
     }else{
       phonebookService
         .create(personObject)
         .then(response => {
-          personObject.id=persons.length+1
-          setPersons(persons.concat(personObject))
+          setPersons(persons.concat(response.data))
+          setPositiveMessage(`Added ${newName}`)
           setNewName("")
           setNewNumber("")
+
         })
     }
     
 
   }
 
+  const alertPositive = (message) => {
+    setPositiveMessage(message)
+    setTimeout(() => {
+      setPositiveMessage(null)
+    }, 5000)
+  }
+
+  const alertError = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
+  const handleFilterChange = (event) => {
+    event.preventDefault()
+    setFilter(event.target.value)
+  }
+
   const handleNameFormChange = (event) => {
+    event.preventDefault()
     setNewName(event.target.value)
   }
 
   const handleNumberFormChange = (event) => {
+    event.preventDefault()
     setNewNumber(event.target.value)
   }
 
   const handleDelete = id => {
-    console.log("deleting " + id)
     const personName = persons.filter(person => person.id === id)[0].name
     const deleteBoolean = confirm(`Delete ${personName}?`)
     if (deleteBoolean){
@@ -131,6 +165,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} className="error"/>
+      <Notification message={positiveMessage} className="positive"/>
       <Filter handleFilterChange={handleFilterChange}/>
       <h3>Add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} newNumber={newNumber} handleNameFormChange={handleNameFormChange} handleNumberFormChange={handleNumberFormChange}/>
