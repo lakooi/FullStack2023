@@ -11,7 +11,6 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
   }
 
   const putBlog = (event) => {
-    console.log(blog)
     const addedLike = blog.likes + 1
     event.preventDefault()
     updateBlog(blog.id, {
@@ -31,14 +30,14 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
   }
 
   return(
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
 
       {blog.title} {blog.author}<Togglable buttonLabel='view' cancelButtonLabel="hide" staticButton>
-        <div style={{ whiteSpace: 'pre-wrap' }}>
+        <div style={{ whiteSpace: 'pre-wrap' }} className='toggledBlog'>
           {blog.url}{'\n'}
-          likes {blog.likes} <button onClick={putBlog}>like</button>{'\n'}
+          likes {blog.likes} <button onClick={putBlog} className='like'>like</button>{'\n'}
           {blog.author}
-          <button onClick={deleteBlog}>remove</button>
+          <button onClick={deleteBlog} className='remove'>remove</button>
         </div>
       </Togglable>
     </div>
@@ -46,7 +45,7 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
 
 }
 
-Notification.propTypes = {
+Blog.propTypes = {
   updateBlog: PropTypes.func.isRequired,
   removeBlog: PropTypes.func.isRequired,
   blog: PropTypes.object.isRequired

@@ -17,4 +17,5 @@ Notification.propTypes = {
   errorMessage: PropTypes.string,
   positiveMessage: PropTypes.string
 }
+
 export default Notification
