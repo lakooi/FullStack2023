@@ -12,12 +12,12 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage,setErrorMessage] = useState(null)
   const [positiveMessage, setPositiveMessage] = useState(null)
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
-  
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -33,21 +33,21 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
       })
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
       setPositiveMessage('Log In Successfull')
       setTimeout(() => {
-         setPositiveMessage(null)
+        setPositiveMessage(null)
       }, 5000)
     } catch (exception) {
       setErrorMessage('Wrong username or password')
@@ -64,18 +64,41 @@ const App = () => {
     setTimeout(() => {
       setPositiveMessage(null)
     }, 5000)
-  };
+  }
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject)
-    .then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog))
-      setPositiveMessage(`a new blog ${blogObject.title} by ${blogObject.author} has been added`)
-      setTimeout(() => {
-        setPositiveMessage(null)
-      }, 5000)
-    })
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setPositiveMessage(`a new blog ${blogObject.title} by ${blogObject.author} has been added`)
+        setTimeout(() => {
+          setPositiveMessage(null)
+        }, 5000)
+      })
+  }
+
+  const updateBlog = (id, blogObject) => {
+    blogService.update(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+        setPositiveMessage(`blog ${blogObject.title} by ${blogObject.author} has been liked`)
+        setTimeout(() => {
+          setPositiveMessage(null)
+        }, 5000)
+      })
+  }
+
+  const removeBlog = (id) => {
+    const blog = blogs.filter(blog => blog.id === id)[0]
+    blogService.remove(id)
+      .then(returnedBlog => {
+        setBlogs(blogs.filter(blog => blog.id !== id))
+        setPositiveMessage(`blog ${blog.title} by ${blog.author} has been removed`)
+        setTimeout(() => {
+          setPositiveMessage(null)
+        }, 5000)
+      })
   }
 
   if (user === null) {
@@ -96,10 +119,10 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm createBlog={addBlog}/>
       </Togglable>
-      <BlogList blogs={blogs} />
+      <BlogList blogs={blogs} updateBlog={updateBlog} removeBlog={removeBlog}/>
     </div>
   )
-  
+
 }
 
 export default App
