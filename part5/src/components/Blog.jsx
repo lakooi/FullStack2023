@@ -1,7 +1,7 @@
 import Togglable from './Togglable'
 import PropTypes from 'prop-types'
 
-const Blog = ({ blog, updateBlog, removeBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -28,7 +28,6 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
       removeBlog(blog.id)
     }
   }
-
   return(
     <div style={blogStyle} className='blog'>
 
@@ -37,7 +36,7 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
           {blog.url}{'\n'}
           likes {blog.likes} <button onClick={putBlog} className='like'>like</button>{'\n'}
           {blog.author}
-          <button onClick={deleteBlog} className='remove'>remove</button>
+          {user.username === blog.user.username ? <button onClick={deleteBlog} className='remove'>remove</button> : null}
         </div>
       </Togglable>
     </div>

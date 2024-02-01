@@ -1,10 +1,10 @@
 import Blog from './Blog'
 import PropTypes from 'prop-types'
 
-const BlogList = ({ blogs, removeBlog, updateBlog }) => (
+const BlogList = ({ blogs, user, removeBlog, updateBlog }) => (
   <div>
     {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-      <Blog key={blog.id} blog={blog} removeBlog={removeBlog} updateBlog={updateBlog}/>
+      <Blog key={blog.id} blog={blog} removeBlog={removeBlog} updateBlog={updateBlog} user={user}/>
     )}
   </div>
 )
