@@ -28,6 +28,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
       removeBlog(blog.id)
     }
   }
+
   return(
     <div style={blogStyle} className='blog'>
 
