@@ -1,54 +1,10 @@
 import { useState, useEffect } from 'react'
 import phonebookService from './services/phonebook'
 import './index.css'
-const Filter = ({handleFilterChange}) => {
-  return (
-    <div>
-      filter shown with <input onChange={handleFilterChange}></input>
-    </div>
-  )
-}
-
-const Persons = ({persons, handleDelete}) => {
-  return (
-    <div>
-       {persons.map(person =>
-        <div key={person.id}>
-          {person.name} {person.number}
-          <button onClick={()=> handleDelete(person.id)}>delete</button>
-        </div>
-      )}
-    </div>
-  )
-}
-
-const PersonForm = ({addPerson, newName, newNumber, handleNameFormChange, handleNumberFormChange}) => {
-  return (
-    <form onSubmit={addPerson}>
-        <div> name: 
-          <input value={newName} onChange={handleNameFormChange} /> 
-        </div>
-        <div>number: 
-          <input value={newNumber} onChange={handleNumberFormChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-  )
-}
-
-const Notification = ({ message, className }) => {
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className={className}>
-      {message}
-    </div>
-  )
-}
+import Persons from './components/Persons'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -98,15 +54,15 @@ const App = () => {
                 return item
               })
             ),
-            setPositiveMessage(`${newName} had their number changed`)
+            alertPositive(`${newName} had their number changed`)
             setNewName("")
             setNewNumber("")
           })
           .catch(error => {
             if(error.response.status===400){
-              setErrorMessage(error.response.data.error)
+              alertError(error.response.data.error)
             } else {
-              setErrorMessage(`Information on ${newName} has already been removed from the server`)
+              alertError(`Information on ${newName} has already been removed from the server`)
             }
           })
       }
@@ -115,13 +71,12 @@ const App = () => {
         .create(personObject)
         .then(response => {
           setPersons(persons.concat(response.data))
-          setPositiveMessage(`Added ${newName}`)
+          alertPositive(`Added ${newName}`)
           setNewName("")
           setNewNumber("")
         })
         .catch(error => {
-          console.log(error.response.data.error)
-          setErrorMessage(error.response.data.error)
+          alertError(error.response.data.error)
         })
     }
   }
@@ -164,6 +119,9 @@ const App = () => {
         .then(response => 
           setPersons(persons.filter(person => person.id !== id))
         )
+        .catch(error => {
+          alertError(`Information on ${personName} has already been removed from the server`)
+        })
     }
   }
 
