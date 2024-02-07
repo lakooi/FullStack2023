@@ -14,7 +14,7 @@ const Blog = ({ blog, updateBlog, removeBlog, user }) => {
     const addedLike = blog.likes + 1
     event.preventDefault()
     updateBlog(blog.id, {
-      user: blog.user,
+      user: blog.user.id,
       likes: addedLike,
       title: blog.title,
       author: blog.author,
