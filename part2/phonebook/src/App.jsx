@@ -1,54 +1,11 @@
 import { useState, useEffect } from 'react'
 import phonebookService from './services/phonebook'
+import Persons from './components/Persons'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 import './index.css'
-const Filter = ({handleFilterChange}) => {
-  return (
-    <div>
-      filter shown with <input onChange={handleFilterChange}></input>
-    </div>
-  )
-}
 
-const Persons = ({persons, handleDelete}) => {
-  return (
-    <div>
-       {persons.map(person =>
-        <div key={person.id}>
-          {person.name} {person.number}
-          <button onClick={()=> handleDelete(person.id)}>delete</button>
-        </div>
-      )}
-    </div>
-  )
-}
-
-const PersonForm = ({addPerson, newName, newNumber, handleNameFormChange, handleNumberFormChange}) => {
-  return (
-    <form onSubmit={addPerson}>
-        <div> name: 
-          <input value={newName} onChange={handleNameFormChange} /> 
-        </div>
-        <div>number: 
-          <input value={newNumber} onChange={handleNumberFormChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-  )
-}
-
-const Notification = ({ message, className }) => {
-  if (message === null) {
-    return null
-  }
-
-  return (
-    <div className={className}>
-      {message}
-    </div>
-  )
-}
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -121,20 +78,6 @@ const App = () => {
 
   }
 
-  const alertPositive = (message) => {
-    setPositiveMessage(message)
-    setTimeout(() => {
-      setPositiveMessage(null)
-    }, 5000)
-  }
-
-  const alertError = (message) => {
-    setErrorMessage(message)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
-  }
-
   const handleFilterChange = (event) => {
     event.preventDefault()
     setFilter(event.target.value)
@@ -159,6 +102,11 @@ const App = () => {
         .then(response => 
           setPersons(persons.filter(person => person.id !== id))
         )
+        .catch(error => {
+          setTimeout(() => {
+            setErrorMessage(`Information on ${personName} has already been removed from the server`)
+          }, 5000)
+        })
     }
   }
 
