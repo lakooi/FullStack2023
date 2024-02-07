@@ -12,14 +12,25 @@ describe('<Blog />', () => {
     author: 'testi1',
     likes: 23,
     title: 'testi3',
-    url: 'kasa.com'
+    url: 'kasa.com',
+    user: {
+      username:'testi1',
+      name:'testi1',
+      id:'id'
+    }
   }
   const updateBlog =  jest.fn()
 
   const removeBlog =  jest.fn()
 
+  const useri = {
+    username: 'testi1',
+    name:'testi1',
+    id:'id'
+  }
+
   beforeEach(() => {
-    container = render(<Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog}/>).container
+    container = render(<Blog blog={blog} updateBlog={updateBlog} removeBlog={removeBlog} user={useri}/>).container
   })
 
   test('Blog renders author and title by default', async () => {
