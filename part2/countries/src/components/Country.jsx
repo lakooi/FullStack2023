@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 
 const CountryInfo = ({country}) => {
 
-    console.log(country)
     return (
         <>
             <h1>{country.name.common}</h1>

@@ -56,11 +56,17 @@ const App = () => {
               })
             ),
             setPositiveMessage(`${newName} had their number changed`)
+            setTimeout(() => {
+              setPositiveMessage(null)
+            }, 5000)
             setNewName("")
             setNewNumber("")
           })
           .catch(error => {
             setErrorMessage(`Information on ${newName} has already been removed from the server`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           })
       }
     }else{
@@ -69,6 +75,9 @@ const App = () => {
         .then(response => {
           setPersons(persons.concat(response.data))
           setPositiveMessage(`Added ${newName}`)
+          setTimeout(() => {
+            setPositiveMessage(null)
+          }, 5000)
           setNewName("")
           setNewNumber("")
 
@@ -103,8 +112,9 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== id))
         )
         .catch(error => {
+          setErrorMessage(`Information on ${personName} has already been removed from the server`)
           setTimeout(() => {
-            setErrorMessage(`Information on ${personName} has already been removed from the server`)
+            setErrorMessage(null)
           }, 5000)
         })
     }
